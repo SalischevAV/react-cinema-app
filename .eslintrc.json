@@ -13,7 +13,7 @@
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true
-          },
+        },
         "ecmaVersion": "latest",
         "sourceType": "module",
         "project": [
@@ -26,7 +26,7 @@
     ],
     "rules": {
         "react/jsx-uses-react": "error",
-    "react/jsx-uses-vars": "error",
+        "react/jsx-uses-vars": "error",
         "no-use-before-define": "off",
         "@typescript-eslint/no-use-before-define": [
             "error"
@@ -59,18 +59,25 @@
             "error",
             "always"
         ],
+        "@typescript-eslint/space-before-function-paren": [
+            "off"
+        ],
         "@typescript-eslint/explicit-function-return-type": [
             "off",
             {
                 "allowExpressions": true
             }
         ],
-        "@typescript-eslint/strict-boolean-expressions": ["off"],
-        "@typescript-eslint/no-floating-promises": ["off"],
+        "@typescript-eslint/strict-boolean-expressions": [
+            "off"
+        ],
+        "@typescript-eslint/no-floating-promises": [
+            "off"
+        ],
         "max-len": [
             "warn",
             {
-                "code": 80
+                "code": 100
             }
         ],
         "react-hooks/rules-of-hooks": "error",
