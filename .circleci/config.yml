@@ -1,52 +1,67 @@
 version: 2.1
+executors:
+  app-executor:
+    docker:
+      - image: cimg/node:16.17
+    working_directory: ~/repo
+
+aliases:
+  - &show-current-branch-name
+    run:
+      name: Show current branch
+      command: echo ${CIRCLE_BRANCH}
+  - &restore-cache
+    restore_cache:
+      keys:
+        - app-{{ checksum "package.json" }}
+        - app-
+  - &install-dependencies
+    run: 
+      name: Install dependencies
+      command: npm install
+  - &save-cache
+    save_cache:
+      paths:
+        - node_modules
+      key: app-{{ checksum "package.json" }}
+  - &install-aws-cli
+    run:
+      name: Install AWS CLI
+      working_directory: /
+      command: |
+        sudo add-apt-repository universe
+        sudo apt-get -y -qq update
+        sudo apt-get install -y awscli
+        sudo apt-get install -y python3-pip python-dev build-essential
+  - &build-project
+    run:
+      name: Build Project
+      command: |
+        npm install
+        npm run build
+        cd build
+        zip ../build.zip -r *.[^.]*
+        echo "Build successful"
+
+
 
 jobs:
   build:
-    docker:
-      - image: cimg/node:16.17
-    working_directory: ~/repo
+    executor: app-executor
     steps:
       - checkout
-      - run:
-          name: Show current branch
-          command: echo ${CIRCLE_BRANCH}
-      - restore_cache:
-          keys:
-            - app-{{ checksum "package.json" }}
-            - app-
-      - save_cache:
-          paths:
-            - node_modules
-          key: app-{{ checksum "package.json" }}
-      - run: 
-          name: Install dependencies
-          command: npm install
+      - *show-current-branch-name
+      - *restore-cache
+      - *install-dependencies
+      - *save-cache
 
   deploy-to-aws-s3:
-    docker:
-      - image: cimg/node:16.17
-    working_directory: ~/repo
+    executor: app-executor
     steps:
       - checkout
-      - run:
-          name: Show current branch
-          command: echo ${CIRCLE_BRANCH}
-      - run:
-          name: Install AWS CLI
-          working_directory: /
-          command: |
-            sudo add-apt-repository universe
-            sudo apt-get -y -qq update
-            sudo apt-get install -y awscli
-            sudo apt-get install -y python3-pip python-dev build-essential
-      - run:
-          name: Build Project
-          command: |
-            npm install
-            npm run build
-            cd build
-            zip ../build.zip -r *.[^.]*
-            echo "Build successful"
+      - *show-current-branch-name
+      - *install-aws-cli
+      - *build-project
       - run:
           name: Deploy to AWS S3
           command: |
@@ -61,30 +76,12 @@ jobs:
             fi
 
   deploy-to-aws-cloudfront:
-    docker:
-      - image: cimg/node:16.17
-    working_directory: ~/repo
+    executor: app-executor
     steps:
       - checkout
-      - run:
-          name: Show current branch
-          command: echo ${CIRCLE_BRANCH}
-      - run:
-          name: Install AWS CLI
-          working_directory: /
-          command: |
-            sudo add-apt-repository universe
-            sudo apt-get -y -qq update
-            sudo apt-get install -y awscli
-            sudo apt-get install -y python3-pip python-dev build-essential
-      - run:
-          name: Build Project
-          command: |
-            npm install
-            npm run build
-            cd build
-            zip ../build.zip -r *.[^.]*
-            echo "Build successful"
+      - *show-current-branch-name
+      - *install-aws-cli
+      - *build-project
       - run:
           name: Deploy to AWS CloudFront
           command: |
