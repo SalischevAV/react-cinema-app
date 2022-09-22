@@ -58,22 +58,22 @@ aliases:
 
 
 jobs:
-  build:
+  check-git-convention:
     executor: app-executor
     steps:
       - checkout
-      - *show-current-branch-name
       - *restore-cache
-      - *install-dependencies
-      - *save-cache
-      - run:
-          name: Copy Infrastructure Folder
+      - run: 
+          name: Check Git Convention
           command: |
-            cp -r infrastructure artifacts/infrastructure
-      - persist_to_workspace:
-          root: ./
-          paths:
-            - artifacts
+            BRANCH_NAME_REGEX='^(feature|hotfix|bugfix)\/'
+            BRANCH_CONVENTION_CHECK="$(echo "${CIRCLE_BRANCH}" | grep -Eo "${BRANCH_NAME_REGEX}")"
+            GIT_COMMIT_DESC="$(git log --format=oneline -n 1 $CIRCLE_SHA1)"
+            echo $GIT_COMMIT_DESC
+            if [ -z "${BRANCH_CONVENTION_CHECK}" ]; then
+                echo 'Branch name does not adhere to project conventions.'
+                exit 1;
+            fi
 
   linting:
     executor: app-executor
@@ -107,6 +107,23 @@ jobs:
             terraform init -backend=false
             terraform validate
             terraform fmt -check
+
+  build:
+    executor: app-executor
+    steps:
+      - checkout
+      - *show-current-branch-name
+      - *restore-cache
+      - *install-dependencies
+      - *save-cache
+      - run:
+          name: Copy Infrastructure Folder
+          command: |
+            cp -r infrastructure artifacts/infrastructure
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - artifacts
 
   terraform-plan-and-apply:
     executor: terraform-executor
@@ -261,8 +278,19 @@ jobs:
 workflows:
   build_and_deploy:
     jobs:
-      - linting
-      - prettier
+      - check-git-convention:
+          filters:
+            branches:
+              ignore:
+                - develop
+                - staging
+                - main
+      - linting:
+          requires:
+            - check-git-convention
+      - prettier:
+          requires:
+            - check-git-convention
       - build:
           requires:
             - linting
