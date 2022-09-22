@@ -92,7 +92,7 @@ jobs:
       - run:
           name: Deploy to AWS S3
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]
+            if [ "${CIRCLE_BRANCH}" == "main" ]
             then
               aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_PRODUCTION} --delete
             elif [ "${CIRCLE_BRANCH}" == "staging" ]
@@ -113,7 +113,7 @@ jobs:
           name: Deploy to AWS CloudFront
           command: |
             aws configure set preview.cloudfront true
-            if [ "${CIRCLE_BRANCH}" == "master" ]
+            if [ "${CIRCLE_BRANCH}" == "main" ]
             then
               aws cloudfront create-invalidation --distribution-id ${PRODUCTION_DISTRIBUTION_ID} --path /\*
             elif [ "${CIRCLE_BRANCH}" == "staging" ]
@@ -201,7 +201,7 @@ workflows:
               only: 
                 - develop
                 - staging
-                - master
+                - main
       - deploy-to-aws-cloudfront:
           requires:
             - deploy-to-aws-s3
@@ -210,7 +210,7 @@ workflows:
               only: 
                 - develop
                 - staging
-                - master
+                - main
       - notify-via-slack:
           requires:
             - deploy-to-aws-cloudfront
@@ -219,4 +219,4 @@ workflows:
               only: 
                 - develop
                 - staging
-                - master
+                - main
