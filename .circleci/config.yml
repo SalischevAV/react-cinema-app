@@ -79,7 +79,7 @@ jobs:
           command: |
             COMMITS_AMOUNT=$(git cherry -v develop | wc -l)
             echo $COMMITS_AMOUNT
-            if [ "COMMITS_AMOUNT" -gt 1 ]; then
+            if [ $COMMITS_AMOUNT -gt 1 ]; then
               echo 'Branch has more than 1 commit'
               exit 1;
             fi
