@@ -104,6 +104,22 @@ jobs:
           name: Run Prettier Check
           command: npm run prettier:check
 
+  merge-to-develop:
+    executor: app-executor
+    steps:
+      - checkout
+      - *show-current-branch-name
+      - *restore-cache
+      - run: 
+          name: Merge To Develop
+          command: |
+            echo git remote -v
+            git checkout develop
+            git merge ${CIRCLE_BRANCH}
+            git branch -D ${CIRCLE_BRANCH}
+            git push -u origin develop
+
+
   terraform-validate:
     executor: terraform-executor
     steps:
@@ -296,10 +312,20 @@ workflows:
                 - main
       - linting
       - prettier
-      - build:
+      - merge-to-develop:
           requires:
             - linting
             - prettier
+            - check-git-convention
+          filters:
+            branches:
+              ignore:
+                - develop
+                - staging
+                - main
+      - build:
+          requires:
+            - merge-to-develop
       - terraform-validate:
           requires:
             - build
