@@ -104,19 +104,6 @@ jobs:
           name: Run Prettier Check
           command: npm run prettier:check
 
-  terraform-validate:
-    executor: terraform-executor
-    steps:
-      - checkout
-      - *show-current-branch-name
-      - run:
-          name: Terraform Validate & Format
-          command: |
-            cd infrastructure/
-            terraform init -backend=false
-            terraform validate
-            terraform fmt -check
-
   build:
     executor: app-executor
     steps:
@@ -133,6 +120,19 @@ jobs:
           root: ./
           paths:
             - artifacts
+
+  terraform-validate:
+    executor: terraform-executor
+    steps:
+      - checkout
+      - *show-current-branch-name
+      - run:
+          name: Terraform Validate & Format
+          command: |
+            cd infrastructure/
+            terraform init -backend=false
+            terraform validate
+            terraform fmt -check
 
   terraform-plan-and-apply:
     executor: terraform-executor
