@@ -294,12 +294,8 @@ workflows:
                 - develop
                 - staging
                 - main
-      - linting:
-          requires:
-            - check-git-convention
-      - prettier:
-          requires:
-            - check-git-convention
+      - linting
+      - prettier
       - build:
           requires:
             - linting
