@@ -64,7 +64,7 @@ jobs:
       - checkout
       - *restore-cache
       - run: 
-          name: Check Git Convention
+          name: Check Git Name Convention
           command: |
             BRANCH_NAME_REGEX='^(feature|hotfix|bugfix)\/'
             BRANCH_CONVENTION_CHECK="$(echo "${CIRCLE_BRANCH}" | grep -Eo "${BRANCH_NAME_REGEX}")"
@@ -73,6 +73,15 @@ jobs:
             if [ -z "${BRANCH_CONVENTION_CHECK}" ]; then
                 echo 'Branch name does not adhere to project conventions.'
                 exit 1;
+            fi
+      - run:
+          name: Check Commits Amount
+          command: |
+            COMMITS_AMOUNT=$(git cherry -v develop | wc -l)
+            echo $COMMITS_AMOUNT
+            if [ "COMMITS_AMOUNT" -gt 1 ]; then
+              echo 'Branch has more than 1 commit'
+              exit 1;
             fi
 
   linting:
