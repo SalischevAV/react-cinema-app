@@ -4,7 +4,7 @@ import { HeaderProps } from './Header.props';
 
 import './Header.scss';
 import Logo from '../../assets/svg/Movie.svg';
-import HEADER_LIST from './const';
+import HEADER_LIST from './headerList';
 
 const Header = (props: HeaderProps): JSX.Element => {
   const [navClass, setNavClass] = useState(false);
