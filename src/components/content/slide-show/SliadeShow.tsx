@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import cn from 'classnames';
 
 import { IndicatorsProps, SlideShowProps } from './SlideShow.props';
@@ -13,10 +13,21 @@ const SlideShow = ({ images, auto = true, showArrows = false }: SlideShowProps) 
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [sliderInterval, setSliderInterval] = useState<NodeJS.Timer>();
 
   let currentSlideIndex = 0;
-
+  const constAutoMoveSlide = useCallback(() => {
+    const lastIndex = currentSlideIndex + 1;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    currentSlideIndex = lastIndex >= images.length ? 0 : lastIndex;
+    setCurrentIndex(currentSlideIndex);
+    setState((prev) => ({
+      ...prev,
+      slideShow: images[currentSlideIndex],
+      slideIndex: currentSlideIndex
+    }));
+  }, []);
   useEffect(() => {
     if (auto) {
       const timeInterval = setInterval(() => constAutoMoveSlide(), 3000);
@@ -26,18 +37,7 @@ const SlideShow = ({ images, auto = true, showArrows = false }: SlideShowProps) 
         clearInterval(timeInterval);
       };
     }
-  }, [images]);
-
-  const constAutoMoveSlide = () => {
-    const lastIndex = currentSlideIndex + 1;
-    currentSlideIndex = lastIndex >= images.length ? 0 : lastIndex;
-    setCurrentIndex(currentSlideIndex);
-    setState((prev) => ({
-      ...prev,
-      slideShow: images[currentSlideIndex],
-      slideIndex: currentSlideIndex
-    }));
-  };
+  }, [auto, constAutoMoveSlide, images]);
 
   const moveSlideWithArrows = (property: 'prev' | 'next') => {
     let index = currentIndex;
