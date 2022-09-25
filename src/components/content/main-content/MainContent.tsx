@@ -1,5 +1,7 @@
 /* eslint-disable max-len */
-import React from 'react';
+import React, { useCallback, useState } from 'react';
+import { PrevNext } from '../../../interfaces';
+import Paginate from '../paginate/Paginate';
 import SlideShow from '../slide-show/SliadeShow';
 
 import './MainContent.scss';
@@ -21,12 +23,27 @@ const pictures = [
 ];
 
 const MainContent = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const paginate = useCallback(
+    (type: PrevNext) => {
+      if (type === 'prev' && currentPage >= 1) {
+        setCurrentPage((prev) => prev - 1);
+      } else {
+        setCurrentPage((prev) => prev + 1);
+      }
+    },
+    [currentPage]
+  );
+
   return (
     <div className="main-content">
       <SlideShow images={pictures} auto={true} showArrows={false} />
       <div className="grid-movie-title">
         <div className="movieType">Now Playing</div>
-        <div className="paginate">Paginate</div>
+        <div className="paginate">
+          <Paginate currentPage={currentPage} paginate={paginate} totalPages={5} />
+        </div>
       </div>
       {/* display grid component */}
     </div>

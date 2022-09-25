@@ -4,6 +4,7 @@ import cn from 'classnames';
 import { IndicatorsProps, SlideShowProps } from './SlideShow.props';
 
 import './SlideShow.scss';
+import { PrevNext } from '../../../interfaces';
 
 const SlideShow = ({ images, auto = true, showArrows = false }: SlideShowProps) => {
   // TODO create interface
@@ -39,7 +40,7 @@ const SlideShow = ({ images, auto = true, showArrows = false }: SlideShowProps) 
     }
   }, [auto, constAutoMoveSlide, images]);
 
-  const moveSlideWithArrows = (property: 'prev' | 'next') => {
+  const moveSlideWithArrows = (property: PrevNext) => {
     let index = currentIndex;
     if (property === 'prev') {
       if (currentIndex <= 0) {
