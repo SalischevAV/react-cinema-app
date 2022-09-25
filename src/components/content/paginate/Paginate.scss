@@ -1,0 +1,24 @@
+@import '../../../library';
+
+.paginate-button {
+    background-color: $btn-color;
+    padding: 8px 15px;
+    text-transform: uppercase;
+    color: $cl-white;
+    border: none;
+    border-radius: 30px;
+    margin: 0 15px;
+    outline: none !important;
+}
+
+.paginate-disable {
+    cursor: none;
+    pointer-events: none;
+    background: $disabled-color;
+}
+
+.pageCount{
+    color: $cl-white;
+    margin: 0 5px;
+    padding: 10px 5px;
+}
