@@ -1,3 +1,5 @@
+@import '../../library';
+
 .logo {
     height: 44px;
     margin-top: 3px;
@@ -8,7 +10,7 @@
     background-color: #fff;
     position: sticky;
     z-index: 20;
-    height: 50px;
+    height: $header_height;
   }
   
   .header-bar {

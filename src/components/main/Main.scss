@@ -1,0 +1,8 @@
+@import '../../library';
+
+.main {
+    text-align: center;
+    height: 100vh;
+    background-color: $bg-color;
+    overflow-y: scroll;
+}
