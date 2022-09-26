@@ -1,6 +1,8 @@
 @import '../../../library';
+
 .main-content {
     margin-bottom: $header_height;
+    max-height: 100%;
 }
 
 .grid-movie-title {
