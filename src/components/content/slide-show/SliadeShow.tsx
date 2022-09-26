@@ -31,7 +31,7 @@ const SlideShow = ({ images, auto = true, showArrows = false }: SlideShowProps) 
   }, []);
   useEffect(() => {
     if (auto) {
-      const timeInterval = setInterval(() => constAutoMoveSlide(), 3000);
+      const timeInterval = setInterval(() => constAutoMoveSlide(), 10000);
       setSliderInterval(timeInterval);
       return () => {
         clearInterval(timeInterval);

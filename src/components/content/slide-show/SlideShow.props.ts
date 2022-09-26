@@ -1,8 +1,5 @@
 import { DetailedHTMLProps, HtmlHTMLAttributes } from 'react';
-
-interface Url {
-  url: string;
-}
+import { Url } from '../../../interfaces';
 
 export interface SlideShowProps
   extends DetailedHTMLProps<HtmlHTMLAttributes<HTMLDivElement>, HTMLDivElement> {
