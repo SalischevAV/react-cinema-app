@@ -5,6 +5,8 @@ import Main from './components/main/Main';
 
 import store from './redux/store';
 
+import './App.scss';
+
 function App(): JSX.Element {
   return (
     <Provider store={store}>

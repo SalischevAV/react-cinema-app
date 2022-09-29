@@ -1,9 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-const initialState = '';
+import { MovieAction, SET_ERROR } from '../actionTypes';
 
-export default (state = initialState, action: any) => {
+const initialState = {
+  errorMessage: ''
+};
+
+export default (state = initialState, action: MovieAction) => {
   switch (action.type) {
+    case SET_ERROR:
+      return {
+        ...state,
+        errorMessage: action.payload
+      };
     default:
-      return state;
+      return {
+        ...state
+      };
   }
 };

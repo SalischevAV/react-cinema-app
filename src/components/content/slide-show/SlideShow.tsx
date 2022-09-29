@@ -1,25 +1,35 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import cn from 'classnames';
+import { useSelector } from 'react-redux';
 
 import { IndicatorsProps, SlideShowProps } from './SlideShow.props';
 
 import './SlideShow.scss';
 import { PrevNext } from '../../../interfaces';
+import { RootState } from '../../../redux/store';
+import { slideShowState } from '../../../redux/reducers/slideShowReducer';
+import Spinner from '../../spinner/Spinner';
 
-const SlideShow = ({ images, auto = true, showArrows = false }: SlideShowProps) => {
-  // TODO create interface
+// TODO remove ts-ignore and add useRef for current index
+const SlideShow = ({ auto = true, showArrows = false }: SlideShowProps) => {
+  const { slides: images } = useSelector<RootState, slideShowState>((state) => state.slideShow);
+
   const [{ slideShow, slideIndex }, setState] = useState({
     slideShow: images[0],
     slideIndex: 0
   });
+
+  // const currentSlideIndexRef = useRef<number>(0);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [sliderInterval, setSliderInterval] = useState<NodeJS.Timer>();
 
   let currentSlideIndex = 0;
-  const constAutoMoveSlide = useCallback(() => {
+
+  const autoMoveSlide = useCallback(() => {
     const lastIndex = currentSlideIndex + 1;
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     currentSlideIndex = lastIndex >= images.length ? 0 : lastIndex;
     setCurrentIndex(currentSlideIndex);
@@ -28,17 +38,26 @@ const SlideShow = ({ images, auto = true, showArrows = false }: SlideShowProps) 
       slideShow: images[currentSlideIndex],
       slideIndex: currentSlideIndex
     }));
-  }, []);
+  }, [images]);
+
   useEffect(() => {
+    setState((prev) => ({
+      ...prev,
+      slideShow: images[currentSlideIndex],
+      slideIndex: currentSlideIndex
+    }));
     if (auto) {
-      const timeInterval = setInterval(() => constAutoMoveSlide(), 3000);
+      const timeInterval = setInterval(() => autoMoveSlide(), 5000);
       setSliderInterval(timeInterval);
       return () => {
         clearInterval(timeInterval);
-        clearInterval(timeInterval);
       };
     }
-  }, [auto, constAutoMoveSlide, images]);
+  }, [auto, autoMoveSlide, currentSlideIndex, images]);
+
+  if (!images || !slideShow) {
+    return <Spinner />;
+  }
 
   const moveSlideWithArrows = (property: PrevNext) => {
     let index = currentIndex;
