@@ -2,7 +2,7 @@
 
 .main {
     text-align: center;
-    height: calc(100vh - 50px);
+    height: 100vh;
     background-color: $bg-color;
-    overflow-y: scroll;
+    overflow: auto;
 }
