@@ -17,7 +17,9 @@ const Paginate = ({ currentPage, totalPages, paginate }: PaginateProps) => {
         Prev
       </button>
       <button
-        className={cn('paginate-button', { 'paginate-disable': currentPage === totalPages })}
+        className={cn('paginate-button', {
+          'paginate-disable': currentPage === totalPages
+        })}
         onClick={() => paginate('next')}
       >
         Next
