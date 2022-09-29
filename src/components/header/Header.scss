@@ -65,8 +65,10 @@
     transition: color 0.3s ease-out;
   }
   
+  .header-nav-item :hover,
   .header-nav-item a:hover {
     color: #3498db;
+    cursor: pointer;
   }
   
   .header-menu-toggle .bar {

@@ -1,27 +1,36 @@
-const HEADER_LIST = [
+import { MovieType, MovieTypeType } from './../../redux/reducers/movieReducer';
+
+interface HeaderList {
+  id: number;
+  iconClass: string;
+  name: MovieType;
+  type: MovieTypeType;
+}
+
+const HEADER_LIST: HeaderList[] = [
   {
     id: 1,
     iconClass: 'fas fa-film',
-    name: 'Now Playing',
-    type: 'now_playing'
+    name: MovieType.NOW_PLAYING,
+    type: MovieTypeType.NOW_PLAYING
   },
   {
     id: 2,
     iconClass: 'fas fa-fire',
-    name: 'Popular',
-    type: 'popular'
+    name: MovieType.POPULAR,
+    type: MovieTypeType.POPULAR
   },
   {
-    id: 1,
+    id: 3,
     iconClass: 'fas fa-star',
-    name: 'Top Rated',
-    type: 'top rated'
+    name: MovieType.TOP_RATED,
+    type: MovieTypeType.TOP_RATED
   },
   {
-    id: 1,
+    id: 4,
     iconClass: 'fas fa-plus-square',
-    name: 'Upcoming',
-    type: 'up_coming'
+    name: MovieType.UPCOMING,
+    type: MovieTypeType.UPCOMING
   }
 ];
 
