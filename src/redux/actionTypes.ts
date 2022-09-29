@@ -1,4 +1,4 @@
-import { MovieType } from './reducers/movieReducer';
+import { MovieType, MovieTypeType } from './reducers/movieReducer';
 import { Url } from './../interfaces/Urls';
 import { Results } from './../interfaces/payloads/Result';
 export const MOVIE_LIST = 'MOVIE_LIST';
@@ -20,6 +20,7 @@ export interface MovieAction {
   type: ACTION_TYPES;
   payload: Results & {
     movieType?: MovieType;
+    requestType: MovieTypeType;
   };
 }
 
