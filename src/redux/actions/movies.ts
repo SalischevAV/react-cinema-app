@@ -6,6 +6,7 @@ import { MOVIE_LIST, SET_ERROR, LOAD_MORE_MOVIES, RESPONSE_PAGE, MOVIE_TYPE } fr
 import { Dispatch } from 'redux';
 import { MovieTypeType } from '../reducers/movieReducer';
 import { MovieType } from './../reducers/movieReducer';
+import { AxiosError } from 'axios';
 
 export const getMovies =
   (type: MovieTypeType, pageNumber = 1) =>
@@ -20,7 +21,10 @@ export const getMovies =
     } catch (error) {
       const errorAction = {
         type: SET_ERROR,
-        payload: (error as MovieError).status_message
+        payload: {
+          errorMessage: (error as AxiosError).message,
+          status: (error as AxiosError).request.status
+        }
       };
       dispatch(errorAction);
     }
