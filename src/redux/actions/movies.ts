@@ -51,11 +51,13 @@ export const getMoreMovies =
 
 export const setResponsePageNumber =
   (page: number, totalPages: number) => async (dispatch: Dispatch) => {
-    const payload = { page, totalPages };
-    dispatch({
-      type: RESPONSE_PAGE,
-      payload
-    });
+    if (page <= totalPages) {
+      const payload = { page, totalPages };
+      dispatch({
+        type: RESPONSE_PAGE,
+        payload
+      });
+    }
   };
 
 export const setMovieType =

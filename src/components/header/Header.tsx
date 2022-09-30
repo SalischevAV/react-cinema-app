@@ -7,7 +7,7 @@ import { HeaderProps } from './Header.props';
 import './Header.scss';
 import Logo from '../../assets/svg/Movie.svg';
 import HEADER_LIST from './headerList';
-import { getMovies, setMovieType, setResponsePageNumber } from '../../redux/actions/movies';
+import { getMovies, setMovieType } from '../../redux/actions/movies';
 import { RootState } from '../../redux/store';
 import { MovieState, MovieType, MovieTypeType } from '../../redux/reducers/movieReducer';
 import { IMAGE_URL } from '../../services/movies.service';
@@ -21,7 +21,7 @@ const Header = (props: HeaderProps): JSX.Element => {
   const [type, setType] = useState<MovieTypeType>(MovieTypeType.NOW_PLAYING);
 
   const dispatch = useDispatch();
-  const { page, totalPages, list } = useSelector<RootState, MovieState>((state) => state.movies);
+  const { page, list } = useSelector<RootState, MovieState>((state) => state.movies);
 
   const randomMovies = list?.sort(() => Math.random() - Math.random()).slice(0, 5);
 
@@ -29,9 +29,10 @@ const Header = (props: HeaderProps): JSX.Element => {
     getMovies(type, page)(dispatch);
   }, [dispatch, page, type]);
 
-  useEffect(() => {
-    setResponsePageNumber(page, totalPages)(dispatch);
-  }, [dispatch, page, totalPages]);
+  // useEffect(() => {
+  //   console.log('header');
+  //   setResponsePageNumber(page, totalPages)(dispatch);
+  // }, [dispatch, page, totalPages]);
 
   useEffect(() => {
     const slides = randomMovies?.map((movie) => ({
