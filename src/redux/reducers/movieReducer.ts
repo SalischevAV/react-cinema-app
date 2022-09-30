@@ -4,7 +4,9 @@ import {
   MOVIE_LIST,
   LOAD_MORE_MOVIES,
   RESPONSE_PAGE,
-  MOVIE_TYPE
+  MOVIE_TYPE,
+  SEARCH_QUERY,
+  SEARCH_RESULT
 } from './../actionTypes';
 
 export enum MovieType {
@@ -29,6 +31,8 @@ export interface MovieState {
   totalResults: number;
   movieType: MovieType;
   requestType: MovieTypeType;
+  searchQuery?: string;
+  searchResult: Result[];
 }
 
 const initialState: MovieState = {
@@ -37,7 +41,8 @@ const initialState: MovieState = {
   totalPages: 0,
   totalResults: 0,
   movieType: MovieType.NOW_PLAYING,
-  requestType: MovieTypeType.NOW_PLAYING
+  requestType: MovieTypeType.NOW_PLAYING,
+  searchResult: []
 };
 
 export default (state = initialState, action: MovieAction) => {
@@ -53,7 +58,10 @@ export default (state = initialState, action: MovieAction) => {
     case LOAD_MORE_MOVIES:
       return {
         ...state,
-        list: [...state.list, ...action.payload.results]
+        list: [...state.list, ...action.payload.results],
+        page: action.payload.page,
+        totalPages: action.payload.totalPages,
+        totalResults: action.payload.totalResults
       };
     case RESPONSE_PAGE:
       return {
@@ -61,13 +69,22 @@ export default (state = initialState, action: MovieAction) => {
         page: action.payload.page,
         totalPages: action.payload.totalPages
       };
-    case MOVIE_TYPE: {
+    case MOVIE_TYPE:
       return {
         ...state,
         movieType: action.payload.movieType,
         requestType: action.payload.requestType
       };
-    }
+    case SEARCH_QUERY:
+      return {
+        ...state,
+        searchQuery: action.payload.searchQuery
+      };
+    case SEARCH_RESULT:
+      return {
+        ...state,
+        searchResult: action.payload.searchResult
+      };
     default:
       return state;
   }
