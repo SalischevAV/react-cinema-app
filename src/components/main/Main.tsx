@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import useScroll from '../../hooks/useScroll';
 import { getMoreMovies, setResponsePageNumber } from '../../redux/actions/movies';
 import { MovieState } from '../../redux/reducers/movieReducer';
 import { RootState } from '../../redux/store';
@@ -22,21 +23,13 @@ const Main = () => {
       setCurrentPage((prev) => prev + 1);
       setResponsePageNumber(currentPage, totalPages)(dispatch);
     }
-    getMoreMovies(requestType, currentPage)(dispatch);
+    getMoreMovies(requestType, currentPage + 1)(dispatch);
   };
 
-  const handleScroll = () => {
-    if (mainRef.current && bottomLineRef.current) {
-      const { height: containerHeight } = mainRef.current.getBoundingClientRect();
-      const { top: bottomLineTop } = bottomLineRef.current.getBoundingClientRect();
-      if (bottomLineTop <= containerHeight) {
-        fetchData();
-      }
-    }
-  };
+  useScroll(mainRef, bottomLineRef, fetchData);
 
   return (
-    <div className="main" ref={mainRef} onScroll={handleScroll}>
+    <div className="main" ref={mainRef}>
       <MainContent />
       <div className="observed" ref={bottomLineRef}></div>
     </div>

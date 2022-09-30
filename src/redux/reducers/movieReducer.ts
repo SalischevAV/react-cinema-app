@@ -53,7 +53,10 @@ export default (state = initialState, action: MovieAction) => {
     case LOAD_MORE_MOVIES:
       return {
         ...state,
-        list: [...state.list, ...action.payload.results]
+        list: [...state.list, ...action.payload.results],
+        page: action.payload.page,
+        totalPages: action.payload.totalPages,
+        totalResults: action.payload.totalResults
       };
     case RESPONSE_PAGE:
       return {
