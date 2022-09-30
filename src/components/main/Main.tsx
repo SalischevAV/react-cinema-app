@@ -5,12 +5,13 @@ import { getMoreMovies, setResponsePageNumber } from '../../redux/actions/movies
 import { MovieState } from '../../redux/reducers/movieReducer';
 import { RootState } from '../../redux/store';
 import MainContent from '../content/main-content/MainContent';
+import SearchResults from '../content/search-results/SearchResults';
 
 import './Main.scss';
 
 const Main = () => {
   const dispatch = useDispatch();
-  const { page, totalPages, requestType } = useSelector<RootState, MovieState>(
+  const { page, totalPages, requestType, searchResult } = useSelector<RootState, MovieState>(
     (state) => state.movies
   );
 
@@ -30,7 +31,7 @@ const Main = () => {
 
   return (
     <div className="main" ref={mainRef}>
-      <MainContent />
+      {searchResult && searchResult.length === 0 ? <MainContent /> : <SearchResults />}
       <div className="observed" ref={bottomLineRef}></div>
     </div>
   );

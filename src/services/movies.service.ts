@@ -11,3 +11,10 @@ export const MOVIE_API_URL = async (type: MovieTypeType, page: number) => {
   );
   return response;
 };
+
+export const SEARCH_API_URL = async (query: string) => {
+  const response = await axios.get(
+    `${REQUEST_URL}/search/movie?api_key=${API_KEY}&language=en-US&query=${query}`
+  );
+  return response;
+};
