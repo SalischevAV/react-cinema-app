@@ -10,9 +10,14 @@ import { RootState } from '../../../redux/store';
 import { MovieState } from '../../../redux/reducers/movieReducer';
 import { IMAGE_URL } from '../../../services/movies.service';
 import LazyImage from '../../lazy-image/LazyImage';
+import { Link } from 'react-router-dom';
 
 const Grid = (props: GridProps): JSX.Element => {
   const { list: images } = useSelector<RootState, MovieState>((state) => state.movies);
+
+  const formatMovieTitle = (title: string): string => {
+    return title.toLowerCase().replace(/ /g, '_');
+  };
   return (
     <>
       <div className="grid" {...props}>
@@ -24,7 +29,11 @@ const Grid = (props: GridProps): JSX.Element => {
               alt="placeholder"
             >
               <div className="grid-read-more">
-                <button className="grid-cell-button">Read More</button>
+                <button className="grid-cell-button">
+                  <Link to={`/${image.id}/${formatMovieTitle(image.title)}/details`}>
+                    Read More
+                  </Link>
+                </button>
               </div>
               <div className="grid-detail">
                 <span className="grid-detail-title">{image.title}</span>
