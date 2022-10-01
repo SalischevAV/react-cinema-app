@@ -13,6 +13,7 @@ import { RootState } from '../../redux/store';
 import { MovieState, MovieType, MovieTypeType } from '../../redux/reducers/movieReducer';
 import { IMAGE_URL } from '../../services/movies.service';
 import { getSlides } from '../../redux/actions/slide';
+import useDebounce from '../../hooks/useDebounce';
 
 // TODO make HOC for all redux actions and get all values by props
 
@@ -25,6 +26,11 @@ const Header = (props: HeaderProps): JSX.Element => {
 
   const dispatch = useDispatch();
   const { list } = useSelector<RootState, MovieState>((state) => state.movies);
+
+  const debouncedSearch = useDebounce((value: string) => {
+    searchQuery(value)(dispatch);
+    searchResult(value)(dispatch);
+  }, 500);
 
   const randomMovies = list?.sort(() => Math.random() - Math.random()).slice(0, 5);
 
@@ -40,12 +46,12 @@ const Header = (props: HeaderProps): JSX.Element => {
     dispatch(getSlides(slides));
   }, [randomMovies, dispatch]);
 
-  const onSearchChange = (event: React.SyntheticEvent) => {
+  function onSearchChange(event: React.SyntheticEvent) {
+    console.log('first');
     const target = event.target as HTMLInputElement;
     setSearch(target.value);
-    searchQuery(target.value)(dispatch);
-    searchResult(target.value)(dispatch);
-  };
+    debouncedSearch(target.value);
+  }
 
   const toggleMenu = () => {
     setNavClass(!navClass);

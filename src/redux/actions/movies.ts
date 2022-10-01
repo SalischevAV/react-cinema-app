@@ -73,8 +73,7 @@ export const searchResult = (searchQuery: string) => async (dispatch: Dispatch) 
 };
 
 export const getMoreMovies =
-  (type: MovieTypeType, pageNumber = 1) =>
-  async (dispatch: Dispatch) => {
+  (type: MovieTypeType, pageNumber: number) => async (dispatch: Dispatch) => {
     try {
       const payload = await getMoviesRequest(type, pageNumber);
       const movieAction = {
