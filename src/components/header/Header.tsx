@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { HeaderProps } from './Header.props';
 
@@ -21,6 +22,8 @@ const Header = (props: HeaderProps): JSX.Element => {
   const [navClass, setNavClass] = useState(false);
   const [menuClass, setMenuClass] = useState(false);
   const [search, setSearch] = useState<string>('');
+
+  const navigator = useNavigate();
 
   const [type, setType] = useState<MovieTypeType>(MovieTypeType.NOW_PLAYING);
 
@@ -45,6 +48,10 @@ const Header = (props: HeaderProps): JSX.Element => {
     }));
     dispatch(getSlides(slides));
   }, [randomMovies, dispatch]);
+
+  function navigateToMainPage() {
+    navigator('/');
+  }
 
   function onSearchChange(event: React.SyntheticEvent) {
     console.log('first');
@@ -73,7 +80,7 @@ const Header = (props: HeaderProps): JSX.Element => {
       <div className="header-nav-wrapper">
         <div className="header-bar">
           <div className="header-navbar">
-            <div className="header-image">
+            <div className="header-image" onClick={navigateToMainPage}>
               <img src={Logo} alt="" className="logo" />
             </div>
             <div
