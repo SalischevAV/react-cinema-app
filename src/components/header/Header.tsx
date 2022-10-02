@@ -2,14 +2,20 @@
 import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { HeaderProps } from './Header.props';
 
 import './Header.scss';
 import Logo from '../../assets/svg/Movie.svg';
 import HEADER_LIST from './headerList';
-import { getMovies, setMovieType, searchQuery, searchResult } from '../../redux/actions/movies';
+import {
+  getMovies,
+  setMovieType,
+  searchQuery,
+  searchResult,
+  clearMovieDetails
+} from '../../redux/actions/movies';
 import { RootState } from '../../redux/store';
 import { MovieState, MovieType, MovieTypeType } from '../../redux/reducers/movieReducer';
 import { IMAGE_URL } from '../../services/movies.service';
@@ -22,8 +28,10 @@ const Header = (props: HeaderProps): JSX.Element => {
   const [navClass, setNavClass] = useState(false);
   const [menuClass, setMenuClass] = useState(false);
   const [search, setSearch] = useState<string>('');
+  const [showSearch, setShowSearch] = useState<boolean>(true);
 
   const navigator = useNavigate();
+  const location = useLocation();
 
   const [type, setType] = useState<MovieTypeType>(MovieTypeType.NOW_PLAYING);
 
@@ -42,6 +50,14 @@ const Header = (props: HeaderProps): JSX.Element => {
   }, []);
 
   useEffect(() => {
+    if (location.pathname !== '/') {
+      setShowSearch(false);
+    } else {
+      setShowSearch(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
     const slides = randomMovies?.map((movie) => ({
       id: movie.id,
       url: `${IMAGE_URL}${movie.poster_path}`
@@ -51,10 +67,10 @@ const Header = (props: HeaderProps): JSX.Element => {
 
   function navigateToMainPage() {
     navigator('/');
+    clearMovieDetails()(dispatch);
   }
 
   function onSearchChange(event: React.SyntheticEvent) {
-    console.log('first');
     const target = event.target as HTMLInputElement;
     setSearch(target.value);
     debouncedSearch(target.value);
@@ -71,6 +87,9 @@ const Header = (props: HeaderProps): JSX.Element => {
   };
 
   const setMovieTypeUrl = (name: MovieTypeType, newMovieType: MovieType) => {
+    if (location.pathname !== '/') {
+      navigator('/');
+    }
     setType(name);
     setMovieType(newMovieType, name)(dispatch);
   };
@@ -110,13 +129,15 @@ const Header = (props: HeaderProps): JSX.Element => {
                   <span className="header-list-name">{data.name}</span>
                 </li>
               ))}
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search for a movie"
-                onChange={onSearchChange}
-                value={search}
-              />
+              {showSearch && (
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Search for a movie"
+                  onChange={onSearchChange}
+                  value={search}
+                />
+              )}
             </ul>
           </div>
         </div>

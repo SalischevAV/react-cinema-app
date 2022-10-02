@@ -19,8 +19,6 @@ const SlideShow = ({ auto = true, showArrows = false }: SlideShowProps) => {
     slideIndex: 0
   });
 
-  // const currentSlideIndexRef = useRef<number>(0);
-
   const [currentIndex, setCurrentIndex] = useState(0);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [sliderInterval, setSliderInterval] = useState<NodeJS.Timer>();

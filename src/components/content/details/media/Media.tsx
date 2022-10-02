@@ -1,40 +1,44 @@
 import React from 'react';
 import { MediaProps } from './Media.props';
+import { IMAGE_URL } from '../../../../services/movies.service';
 
 import './Media.scss';
 
-const Media = (props: MediaProps) => {
+const Media = ({ images, videos, ...props }: MediaProps) => {
   return (
     <>
       <div className="media" {...props}>
         <div>
           <div className="media-title">Watch Trailer</div>
           <div className="media-videos">
-            <div className="video">
-              <iframe
-                title="Avengers"
-                style={{
-                  width: '100%',
-                  height: '100%'
-                }}
-                src="https://www.youtube.com/embed/TcMBFSGVi1c"
-                frameBorder="0"
-                allowFullScreen
-              />
-            </div>
+            {videos.results.map((video) => (
+              <div className="video" key={video.key}>
+                <iframe
+                  title={video.name}
+                  style={{
+                    width: '100%',
+                    height: '100%'
+                  }}
+                  src={`https://www.youtube.com/embed/${video.id}`}
+                  frameBorder="0"
+                  allowFullScreen
+                />
+              </div>
+            ))}
           </div>
         </div>
         <div>
-          <div className="media-title">Photos (10)</div>
+          <div className="media-title">Photos ({images.posters.length})</div>
           <div className="media-images">
-            <div
-              className="image-cell"
-              style={{
-                backgroundImage:
-                  // eslint-disable-next-line max-len
-                  'url(https://images.pexels.com/photos/688574/pexels-photo-688574.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500)'
-              }}
-            ></div>
+            {images.posters.map((image) => (
+              <div
+                key={image.file_path}
+                className="image-cell"
+                style={{
+                  backgroundImage: `url(${IMAGE_URL}${image.file_path})`
+                }}
+              ></div>
+            ))}
           </div>
         </div>
       </div>
