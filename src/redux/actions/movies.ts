@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/indent */
 /* eslint-disable @typescript-eslint/naming-convention */
-import { MovieError } from '../../interfaces/payloads';
-import { MOVIE_API_URL, SEARCH_API_URL } from './../../services/movies.service';
+import {
+  MOVIE_IMAGES_URL,
+  MOVIE_REVIEWS_URL,
+  MOVIE_API_URL,
+  MOVIE_CREDITS_URL,
+  MOVIE_DETAILS_URL,
+  MOVIE_VIDEOS_URL,
+  SEARCH_API_URL
+} from './../../services/movies.service';
 import {
   MOVIE_LIST,
   SET_ERROR,
@@ -9,17 +16,20 @@ import {
   RESPONSE_PAGE,
   MOVIE_TYPE,
   SEARCH_QUERY,
-  SEARCH_RESULT
+  SEARCH_RESULT,
+  MOVIE_DETAILS,
+  CLEAR_MOVIE_DETAILS
 } from '../actionTypes';
 import { Dispatch } from 'redux';
-import { MovieTypeType } from '../reducers/movieReducer';
-import { MovieType } from './../reducers/movieReducer';
+import { MovieTypeType, MovieType } from '../reducers/movieReducer';
 import { AxiosError } from 'axios';
+import { LOADING, LOADING_FINISHED } from '../reducers/loadingReducer';
 
 export const getMovies =
   (type: MovieTypeType, pageNumber = 1) =>
   async (dispatch: Dispatch) => {
     try {
+      dispatch({ type: LOADING });
       const payload = await getMoviesRequest(type, pageNumber);
       const movieAction = {
         type: MOVIE_LIST,
@@ -35,12 +45,15 @@ export const getMovies =
         }
       };
       dispatch(errorAction);
+    } finally {
+      dispatch({ type: LOADING_FINISHED });
     }
   };
 
 export const searchResult = (searchQuery: string) => async (dispatch: Dispatch) => {
   try {
     if (searchQuery) {
+      dispatch({ type: LOADING });
       const {
         data: { results: movies }
       } = await SEARCH_API_URL(searchQuery);
@@ -69,12 +82,15 @@ export const searchResult = (searchQuery: string) => async (dispatch: Dispatch) 
       }
     };
     dispatch(errorAction);
+  } finally {
+    dispatch({ type: LOADING_FINISHED });
   }
 };
 
 export const getMoreMovies =
   (type: MovieTypeType, pageNumber: number) => async (dispatch: Dispatch) => {
     try {
+      dispatch({ type: LOADING });
       const payload = await getMoviesRequest(type, pageNumber);
       const movieAction = {
         type: LOAD_MORE_MOVIES,
@@ -84,9 +100,14 @@ export const getMoreMovies =
     } catch (error) {
       const errorAction = {
         type: SET_ERROR,
-        payload: (error as MovieError).status_message
+        payload: {
+          errorMessage: (error as AxiosError).message,
+          status: (error as AxiosError).request.status
+        }
       };
       dispatch(errorAction);
+    } finally {
+      dispatch({ type: LOADING_FINISHED });
     }
   };
 
@@ -124,4 +145,44 @@ const getMoviesRequest = async (type: MovieTypeType, pageNumber: number) => {
   } = await MOVIE_API_URL(type, pageNumber);
   const payload = { results, page, totalPages, totalResults };
   return payload;
+};
+
+export const getMovieDetails = (id: string | number) => async (dispatch: Dispatch) => {
+  try {
+    dispatch({ type: LOADING });
+    const details = await MOVIE_DETAILS_URL(id);
+    const credits = await MOVIE_CREDITS_URL(id);
+    const images = await MOVIE_IMAGES_URL(id);
+    const videos = await MOVIE_VIDEOS_URL(id);
+    const reviews = await MOVIE_REVIEWS_URL(id);
+
+    const resp = await Promise.all([details, credits, images, videos, reviews])
+      .then(async (values) => await Promise.all(values.map((value) => value.data)))
+      .then((response) => response);
+    const movieAction = {
+      type: MOVIE_DETAILS,
+      payload: {
+        movie: resp
+      }
+    };
+    dispatch(movieAction);
+  } catch (error) {
+    const errorAction = {
+      type: SET_ERROR,
+      payload: {
+        errorMessage: (error as AxiosError).message,
+        status: (error as AxiosError).request.status
+      }
+    };
+    dispatch(errorAction);
+  } finally {
+    dispatch({ type: LOADING_FINISHED });
+  }
+};
+
+export const clearMovieDetails = () => (dispatch: Dispatch) => {
+  const movieAction = {
+    type: CLEAR_MOVIE_DETAILS
+  };
+  dispatch(movieAction);
 };

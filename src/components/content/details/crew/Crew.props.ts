@@ -1,7 +1,7 @@
-import { MovieReviews } from './../../../../interfaces/payloads/MovieReviews';
 import { DetailedHTMLProps, HtmlHTMLAttributes } from 'react';
+import { MovieCredits } from '../../../../interfaces/payloads/MovieCredits';
 
-export interface ReviewsProps
+export interface CrewProps
   extends DetailedHTMLProps<HtmlHTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  reviews: MovieReviews;
+  credits: MovieCredits;
 }
