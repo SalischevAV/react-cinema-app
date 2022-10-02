@@ -9,6 +9,9 @@ export const MOVIE_TYPE = 'MOVIE_TYPE';
 export const SEARCH_QUERY = 'SEARCH_QUERY';
 export const SEARCH_RESULT = 'SEARCH_RESULT';
 
+export const MOVIE_DETAILS = 'MOVIE_DETAILS';
+export const CLEAR_MOVIE_DETAILS = 'CLEAR_MOVIE_DETAILS';
+
 export const SET_SLIDESHOW = 'SET_SLIDESHOW';
 
 export type ACTION_TYPES =
@@ -18,7 +21,9 @@ export type ACTION_TYPES =
   | typeof LOAD_MORE_MOVIES
   | typeof MOVIE_TYPE
   | typeof SEARCH_QUERY
-  | typeof SEARCH_RESULT;
+  | typeof SEARCH_RESULT
+  | typeof MOVIE_DETAILS
+  | typeof CLEAR_MOVIE_DETAILS;
 
 export interface MovieAction {
   type: ACTION_TYPES;
@@ -27,6 +32,8 @@ export interface MovieAction {
     requestType: MovieTypeType;
     searchQuery?: string;
     searchResult: Result[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    movie: any[];
   };
 }
 

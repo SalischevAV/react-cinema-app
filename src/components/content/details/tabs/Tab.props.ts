@@ -5,7 +5,7 @@ import { DetailedHTMLProps, HtmlHTMLAttributes } from 'react';
 // TODO delete any
 export interface TabProps
   extends DetailedHTMLProps<HtmlHTMLAttributes<HTMLLIElement>, HTMLLIElement> {
-  activeTab: any;
+  activeTab: string;
   label: string;
   click: Function;
 }
