@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useMatch } from 'react-router-dom';
 
 import { HeaderProps } from './Header.props';
 
@@ -29,9 +29,11 @@ const Header = (props: HeaderProps): JSX.Element => {
   const [menuClass, setMenuClass] = useState(false);
   const [search, setSearch] = useState<string>('');
   const [showSearch, setShowSearch] = useState<boolean>(true);
+  const [showHeader, setShowHeader] = useState<boolean>(true);
 
   const navigator = useNavigate();
   const location = useLocation();
+  const detailsRoute = useMatch('/:id/:name/details');
 
   const [type, setType] = useState<MovieTypeType>(MovieTypeType.NOW_PLAYING);
 
@@ -65,6 +67,15 @@ const Header = (props: HeaderProps): JSX.Element => {
     dispatch(getSlides(slides));
   }, [randomMovies, dispatch]);
 
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    if (detailsRoute || location.pathname === '/') {
+      setShowHeader(true);
+    } else {
+      setShowHeader(false);
+    }
+  }, [detailsRoute, location.pathname]);
+
   function navigateToMainPage() {
     navigator('/');
     clearMovieDetails()(dispatch);
@@ -89,59 +100,63 @@ const Header = (props: HeaderProps): JSX.Element => {
   const setMovieTypeUrl = (name: MovieTypeType, newMovieType: MovieType) => {
     if (location.pathname !== '/') {
       navigator('/');
+      clearMovieDetails()(dispatch);
     }
     setType(name);
     setMovieType(newMovieType, name)(dispatch);
+    getMovies(name)(dispatch);
   };
 
   return (
     <>
-      <div className="header-nav-wrapper">
-        <div className="header-bar">
-          <div className="header-navbar">
-            <div className="header-image" onClick={navigateToMainPage}>
-              <img src={Logo} alt="" className="logo" />
+      {showHeader && (
+        <div className="header-nav-wrapper">
+          <div className="header-bar">
+            <div className="header-navbar">
+              <div className="header-image" onClick={navigateToMainPage}>
+                <img src={Logo} alt="" className="logo" />
+              </div>
+              <div
+                id="header-mobile-menu"
+                onClick={toggleMenu}
+                className={cn('header-menu-toggle', {
+                  'is-active': menuClass
+                })}
+              >
+                <span className="bar"></span>
+                <span className="bar"></span>
+                <span className="bar"></span>
+              </div>
+              <ul className={cn('header-nav', { 'header-mobile-nav': navClass })}>
+                {HEADER_LIST.map((data) => (
+                  <li
+                    key={data.id}
+                    className={cn('header-nav-item', {
+                      'active-item': data.type === type
+                    })}
+                    onClick={() => setMovieTypeUrl(data.type, data.name)}
+                  >
+                    <span className="header-list-name">
+                      <i className={data.iconClass}></i>
+                    </span>
+                    &nbsp;
+                    <span className="header-list-name">{data.name}</span>
+                  </li>
+                ))}
+                {showSearch && (
+                  <input
+                    type="text"
+                    className="search-input"
+                    placeholder="Search for a movie"
+                    onChange={onSearchChange}
+                    value={search}
+                  />
+                )}
+              </ul>
             </div>
-            <div
-              id="header-mobile-menu"
-              onClick={toggleMenu}
-              className={cn('header-menu-toggle', {
-                'is-active': menuClass
-              })}
-            >
-              <span className="bar"></span>
-              <span className="bar"></span>
-              <span className="bar"></span>
-            </div>
-            <ul className={cn('header-nav', { 'header-mobile-nav': navClass })}>
-              {HEADER_LIST.map((data) => (
-                <li
-                  key={data.id}
-                  className={cn('header-nav-item', {
-                    'active-item': data.type === type
-                  })}
-                  onClick={() => setMovieTypeUrl(data.type, data.name)}
-                >
-                  <span className="header-list-name">
-                    <i className={data.iconClass}></i>
-                  </span>
-                  &nbsp;
-                  <span className="header-list-name">{data.name}</span>
-                </li>
-              ))}
-              {showSearch && (
-                <input
-                  type="text"
-                  className="search-input"
-                  placeholder="Search for a movie"
-                  onChange={onSearchChange}
-                  value={search}
-                />
-              )}
-            </ul>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

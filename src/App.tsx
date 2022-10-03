@@ -8,6 +8,7 @@ import store from './redux/store';
 
 import './App.scss';
 import Details from './components/content/details/Details';
+import ErrorPage from './components/errorPage/ErrorPage';
 
 function App(): JSX.Element {
   return (
@@ -18,6 +19,7 @@ function App(): JSX.Element {
           <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/:id/:name/details" element={<Details />} />
+            <Route path="*" element={<ErrorPage />} />
           </Routes>
         </div>
       </BrowserRouter>
