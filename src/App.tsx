@@ -18,7 +18,7 @@ function App(): JSX.Element {
         <div className="app">
           <Routes>
             <Route path="/" element={<Main />} />
-            <Route path="/:id/:name/details" element={<Details />} />
+            <Route path="/:id/:name/details" element={<Details movie={[]} loading={false} />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </div>
