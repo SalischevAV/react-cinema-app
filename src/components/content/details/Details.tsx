@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { compose } from 'ts-compose';
 import { getMovieDetails } from '../../../redux/actions/movies';
-import { LoadingState } from '../../../redux/reducers/loadingReducer';
-import { MovieState } from '../../../redux/reducers/movieReducer';
-import { RootState } from '../../../redux/store';
 import Spinner from '../../spinner/Spinner';
 import Crew from './crew/Crew';
 import Rating from '../rating/Rating';
 import { DetailsProps } from './Details.props';
-import './Details.scss';
 import Media from './media/Media';
 import Overview from './overview/Overview';
 import Reviews from './reviews/Reviews';
@@ -21,11 +18,13 @@ import { MovieCredits } from '../../../interfaces/payloads/MovieCredits';
 import { MovieImages } from '../../../interfaces/payloads/MovieImages';
 import { MovieVideos } from '../../../interfaces/payloads/MovieVideos';
 import { MovieReviews } from '../../../interfaces/payloads/MovieReviews';
+import { withMovie } from '../../../HOC/withMovie';
+import { withLoading } from '../../../HOC/withLoading';
 
-const Details = (props: DetailsProps) => {
+import './Details.scss';
+
+const Details = ({ movie, loading, ...props }: DetailsProps) => {
   const dispatch = useDispatch();
-  const { movie } = useSelector<RootState, MovieState>((state) => state.movies);
-  const { loading } = useSelector<RootState, LoadingState>((state) => state.loading);
   const { id } = useParams();
 
   const [details, setDetails] = useState<MovieDetails>();
@@ -113,4 +112,4 @@ const Details = (props: DetailsProps) => {
   );
 };
 
-export default Details;
+export default compose(withMovie, withLoading)(Details);
