@@ -9,6 +9,7 @@ import store from './redux/store';
 import './App.scss';
 import Details from './components/content/details/Details';
 import ErrorPage from './components/errorPage/ErrorPage';
+import { initialState } from './redux/reducers/movieReducer';
 
 function App(): JSX.Element {
   return (
@@ -17,7 +18,7 @@ function App(): JSX.Element {
         <Header />
         <div className="app">
           <Routes>
-            <Route path="/" element={<Main />} />
+            <Route path="/" element={<Main movies={initialState} />} />
             <Route path="/:id/:name/details" element={<Details movie={[]} loading={false} />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
