@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withMovies } from '../../HOC/withMovies';
 import useScroll from '../../hooks/useScroll';
 import { getMoreMovies, setResponsePageNumber } from '../../redux/actions/movies';
+import { pathUrl } from '../../redux/actions/routes';
 import { LoadingState } from '../../redux/reducers/loadingReducer';
 import { RootState } from '../../redux/store';
 import MainContent from '../content/main-content/MainContent';
@@ -21,7 +22,14 @@ const Main = ({ movies: { page, totalPages, requestType, searchResult }, ...prop
   const mainRef = useRef<HTMLDivElement>(null);
   const bottomLineRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    pathUrl(window?.location?.pathname, window?.location?.href)(dispatch);
+  }, [dispatch]);
+
   const fetchData = () => {
+    if (totalPages === 0) {
+      return;
+    }
     if (currentPage < totalPages) {
       setCurrentPage((prev) => prev + 1);
       setResponsePageNumber(currentPage, totalPages)(dispatch);

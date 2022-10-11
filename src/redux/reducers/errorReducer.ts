@@ -1,15 +1,21 @@
-import { MovieAction, SET_ERROR } from '../actionTypes';
+import { ErrorAction, SET_ERROR } from '../actionTypes';
 
-const initialState = {
+export interface ErrorState {
+  errorMessage: string | undefined;
+  statusCode?: string | number | undefined;
+}
+
+const initialState: ErrorState = {
   errorMessage: ''
 };
 
-export default (state = initialState, action: MovieAction) => {
+export default (state = initialState, action: ErrorAction) => {
   switch (action.type) {
     case SET_ERROR:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.payload.errorMessage,
+        statusCode: action.payload.statusCode
       };
     default:
       return {
