@@ -18,7 +18,8 @@ import {
   SEARCH_QUERY,
   SEARCH_RESULT,
   MOVIE_DETAILS,
-  CLEAR_MOVIE_DETAILS
+  CLEAR_MOVIE_DETAILS,
+  ErrorAction
 } from '../actionTypes';
 import { Dispatch } from 'redux';
 import { MovieTypeType, MovieType } from '../reducers/movieReducer';
@@ -37,11 +38,11 @@ export const getMovies =
       };
       dispatch(movieAction);
     } catch (error) {
-      const errorAction = {
+      const errorAction: ErrorAction = {
         type: SET_ERROR,
         payload: {
           errorMessage: (error as AxiosError).message,
-          status: (error as AxiosError).request.status
+          statusCode: (error as AxiosError).response?.status ?? (error as AxiosError).status
         }
       };
       dispatch(errorAction);
@@ -74,11 +75,11 @@ export const searchResult = (searchQuery: string) => async (dispatch: Dispatch) 
       dispatch(movieAction);
     }
   } catch (error) {
-    const errorAction = {
+    const errorAction: ErrorAction = {
       type: SET_ERROR,
       payload: {
         errorMessage: (error as AxiosError).message,
-        status: (error as AxiosError).request.status
+        statusCode: (error as AxiosError).response?.status ?? (error as AxiosError).status
       }
     };
     dispatch(errorAction);
@@ -98,11 +99,11 @@ export const getMoreMovies =
       };
       dispatch(movieAction);
     } catch (error) {
-      const errorAction = {
+      const errorAction: ErrorAction = {
         type: SET_ERROR,
         payload: {
           errorMessage: (error as AxiosError).message,
-          status: (error as AxiosError).request.status
+          statusCode: (error as AxiosError).response?.status ?? (error as AxiosError).status
         }
       };
       dispatch(errorAction);
@@ -167,11 +168,11 @@ export const getMovieDetails = (id: string | number) => async (dispatch: Dispatc
     };
     dispatch(movieAction);
   } catch (error) {
-    const errorAction = {
+    const errorAction: ErrorAction = {
       type: SET_ERROR,
       payload: {
         errorMessage: (error as AxiosError).message,
-        status: (error as AxiosError).request.status
+        statusCode: (error as AxiosError).response?.status ?? (error as AxiosError).status
       }
     };
     dispatch(errorAction);

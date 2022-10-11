@@ -21,8 +21,9 @@ import { MovieState, MovieType, MovieTypeType } from '../../redux/reducers/movie
 import { IMAGE_URL } from '../../services/movies.service';
 import { getSlides } from '../../redux/actions/slide';
 import useDebounce from '../../hooks/useDebounce';
-
-// TODO make HOC for all redux actions and get all values by props
+import { routesState } from '../../redux/reducers/routReducer';
+import { setError } from '../../redux/actions/error';
+import { ErrorState } from '../../redux/reducers/errorReducer';
 
 const Header = (props: HeaderProps): JSX.Element => {
   const [navClass, setNavClass] = useState(false);
@@ -39,17 +40,40 @@ const Header = (props: HeaderProps): JSX.Element => {
 
   const dispatch = useDispatch();
   const { list } = useSelector<RootState, MovieState>((state) => state.movies);
+  const { url, path, routesArray } = useSelector<RootState, routesState>((state) => state.routes);
+  const { errorMessage, statusCode } = useSelector<RootState, ErrorState>((state) => state.errors);
 
   const debouncedSearch = useDebounce((value: string) => {
     searchQuery(value)(dispatch);
     searchResult(value)(dispatch);
   }, 500);
 
-  const randomMovies = list?.sort(() => Math.random() - Math.random()).slice(0, 5);
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    if (errorMessage || statusCode) {
+      const error = new Error(`${errorMessage ?? ''}. Status code : ${statusCode ?? ''}`);
+      throw error;
+    }
+  }, [errorMessage, statusCode]);
+
+  useEffect(() => {
+    if (routesArray.length) {
+      if (!path && !url) {
+        const error = new Error(
+          `The page with path '${location.pathname}' not found. Status code : 404`
+        );
+        setError({
+          errorMessage: `The page with path '${location.pathname}' not found`,
+          statusCode: 404
+        })(dispatch);
+        throw error;
+      }
+    }
+  }, [routesArray, path, url]);
 
   useEffect(() => {
     getMovies(type)(dispatch);
-  }, []);
+  }, [type]);
 
   useEffect(() => {
     if (location.pathname !== '/') {
@@ -60,12 +84,13 @@ const Header = (props: HeaderProps): JSX.Element => {
   }, [location.pathname]);
 
   useEffect(() => {
+    const randomMovies = list?.sort(() => Math.random() - Math.random()).slice(0, 5);
     const slides = randomMovies?.map((movie) => ({
       id: movie.id,
       url: `${IMAGE_URL}${movie.poster_path}`
     }));
     dispatch(getSlides(slides));
-  }, [randomMovies, dispatch]);
+  }, [list, dispatch]);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing

@@ -22,6 +22,7 @@ import { withMovie } from '../../../HOC/withMovie';
 import { withLoading } from '../../../HOC/withLoading';
 
 import './Details.scss';
+import { pathUrl } from '../../../redux/actions/routes';
 
 const Details = ({ movie, loading, ...props }: DetailsProps) => {
   const dispatch = useDispatch();
@@ -45,6 +46,10 @@ const Details = ({ movie, loading, ...props }: DetailsProps) => {
       setReviews(movie[4] as MovieReviews);
     }
   }, [dispatch, id, movie, movie.length]);
+
+  useEffect(() => {
+    pathUrl(window?.location?.pathname, window?.location?.href)(dispatch);
+  }, [dispatch]);
 
   if (loading) {
     return <Spinner />;
