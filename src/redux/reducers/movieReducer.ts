@@ -50,7 +50,7 @@ export interface MovieState {
   movie: MovieDetailsPayload[];
 }
 
-const initialState: MovieState = {
+export const initialState: MovieState = {
   list: [],
   page: 1,
   totalPages: 0,
